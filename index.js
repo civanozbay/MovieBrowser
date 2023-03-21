@@ -47,18 +47,26 @@ const resultsWrapper = document.querySelector('.results');
 const onInput =  async event => {
     // define 
     const movies = await fetchData(event.target.value); // we can get access to value through target.value 
-    
+    if(!movies.length){
+        dropdown.classList.remove('is-active')
+    }
+
     resultsWrapper.innerHTML = '';
-    dropdown.classList.add('is-active'); // we added input to the dropdown
+    dropdown.classList.add('is-active'); // we are opening to dropdown with adding to classlist
     for (let movie of movies) {
         const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
-        const div = document.createElement('div');
-    
+        const div = document.createElement('a');
+        
+        div.classList.add('dropdown-item'); 
         div.innerHTML = `
           <img src="${imgSrc}" />
           ${movie.Title}
         `;
-    
+        div.addEventListener('click',() => { 
+            dropdown.classList.remove('is-active');
+            input.value=movie.Title;
+            onMovieSelect(movie);
+        })
         resultsWrapper.appendChild(div);
     }
 }
@@ -69,3 +77,31 @@ document.addEventListener('click',event => {
         dropdown.classList.remove('is-active')
     }
 })
+const onMovieSelect = async movie => {
+    const response = await axios.get('http://www.omdbapi.com/',{
+        params: { // this object turn into string and add end of the url. One of the advantages of axios library.
+            apikey : '3a4f6c19',
+            i : movie.imdbID
+        }
+    })
+    document.querySelector('#summary').innerHTML = movieTemplate(response.data)
+};
+
+const movieTemplate = (movieDetail) => {
+    return `
+        <article class="media">
+            <figure class="media-left">
+                <p class="image">
+                    <img src="${movieDetail.Poster}"/>
+                </p>
+            </figure>
+            <div class="media-content">
+                <div class="content">
+                    <h1>${movieDetail.Title}</h1>
+                    <h4>${movieDetail.Genre}</h4>
+                    <p>${movieDetail.Plot}</p>
+                </div>
+            </div>
+        </article>
+    `
+}
