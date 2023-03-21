@@ -9,10 +9,28 @@ const fetchData = async (searchTerm) => {
             // i : 'tt0848228'
         }
     });
-    console.log(response.data);
+    if(response.data.Error){
+        return [];
+    }
+
+    return response.data.Search;
 }
+const root = document.querySelector('.autocomplete');
+root.innerHTML = `
+  <label><b>Search For a Movie</b></label>
+  <input class="input" />
+  <div class="dropdown">
+    <div class="dropdown-menu">
+      <div class="dropdown-content results"></div>
+    </div>
+  </div>
+`;
+
 
 const input = document.querySelector('input');
+const dropdown = document.querySelector('.dropdown');
+const resultsWrapper = document.querySelector('.results');
+
 
 
 // FIRST IMPLEMENTATION BEFORE CREATING DEBOUNCE FUNCTION
@@ -26,7 +44,22 @@ const input = document.querySelector('input');
 // }
 // input.addEventListener('input',onInput)
 
-const onInput = event => {
-    fetchData(event.target.value); // we can get access to value through target.value
+const onInput =  async event => {
+    // define 
+    const movies = await fetchData(event.target.value); // we can get access to value through target.value 
+    
+    resultsWrapper.innerHTML = '';
+    dropdown.classList.add('is-active'); // we added input to the dropdown
+    for (let movie of movies) {
+        const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
+        const div = document.createElement('div');
+    
+        div.innerHTML = `
+          <img src="${imgSrc}" />
+          ${movie.Title}
+        `;
+    
+        resultsWrapper.appendChild(div);
+    }
 }
 input.addEventListener('input',debounce(onInput,1000));
