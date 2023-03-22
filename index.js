@@ -63,7 +63,24 @@
     }
   };
   const runComparison = () => {
-    console.log('time for comparison');
+    //taking all the elements inside of left and right autocomplete
+    const leftSideStats = document.querySelectorAll('#left-summary .notification') 
+    const rightSideStats = document.querySelectorAll('#right-summary .notification')
+
+    leftSideStats.forEach((leftStat,index) => {
+        const rightStat =rightSideStats[index];
+        
+        const leftSideValue = parseInt(leftStat.dataset.value); //dataset.value return string
+        const rightSideValue = parseInt(rightStat.dataset.value);
+
+        if(leftSideValue>rightSideValue){
+            rightStat.classList.remove('is-primary'); //coming from bulma css
+            rightStat.classList.add('is-warning');
+        }else{
+            leftStat.classList.remove('is-primary');
+            leftStat.classList.add('is-warning');
+        }
+    })
   }
   
   const movieTemplate = movieDetail => {
@@ -73,7 +90,6 @@
     const imdbVotes = parseInt(movieDetail.imdbVotes.replace(/,/g,''));
     
     const awards = movieDetail.Awards.split(' ').reduce((prev,word)=>{
-        console.log(word)
         const value  = parseInt(word)
 
         if(isNaN(value)){

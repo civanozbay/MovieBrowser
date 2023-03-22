@@ -1,4 +1,7 @@
+// creating widget for reusablity
+// now you can extract this file and implement any other project that use bulma css framework!!
 const createAutoComplete = ({ root, renderOption,onOptionSelect,inputValue,fetchData }) => {
+    // aim for innerhtml was keeping the html file as simple as we can.Also for the reusability we implement html with js 
     root.innerHTML = `
       <label><b>Search For a Movie</b></label>
       <input class="input" />
